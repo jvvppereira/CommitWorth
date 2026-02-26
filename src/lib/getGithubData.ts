@@ -1,10 +1,10 @@
 import { graphqlClient } from "./api/graphqlClient"
 import { queryGitHubData } from "./api/queryGitHubData"
-import { 
-    GitHubCompleteData, 
-    GitHubStatsResponse, 
-    Repository, 
-    UserProps 
+import {
+    GitHubCompleteData,
+    GitHubStatsResponse,
+    Repository,
+    UserProps
 } from "@/lib/types"
 
 import { calculateAchievements } from "./calcs/calculateAchievements"
@@ -20,7 +20,32 @@ import { calcStructuredRepoScores } from "./calcs/calcStructuredRepoScores"
 
 async function fetchGitHubData(username: string): Promise<GitHubStatsResponse> {
     try {
-        return await graphqlClient.request<GitHubStatsResponse>(queryGitHubData, { login: username })
+        const currentYear = new Date().getFullYear()
+        let from = `${currentYear}-01-01T00:00:00Z`;
+        let to = `${currentYear}-12-31T23:59:59Z`;
+
+        const baseResponse = await graphqlClient.request<GitHubStatsResponse>(queryGitHubData, { login: username, from, to })
+
+        const userCreatedYear = new Date(baseResponse.user.createdAt).getFullYear()
+
+        const promises = []
+
+        for (let year = userCreatedYear; year < currentYear; year++) {
+            from = `${year}-01-01T00:00:00Z`
+            to = `${year}-12-31T23:59:59Z`
+
+            promises.push(graphqlClient.request<GitHubStatsResponse>(queryGitHubData, { login: username, from, to }))
+        }
+
+        const results = await Promise.all(promises)
+
+        const totalCommits = results.reduce((sum: number, res: GitHubStatsResponse) => {
+            return sum + res.user.contributionsCollection.totalCommitContributions
+        }, 0)
+
+        baseResponse.user.contributionsCollection.totalCommitContributions = totalCommits
+
+        return baseResponse;
     } catch (error) {
         throw error
     }
@@ -28,27 +53,27 @@ async function fetchGitHubData(username: string): Promise<GitHubStatsResponse> {
 
 export async function getGitHubStatsGraphQL(username: string): Promise<GitHubCompleteData> {
     const data = await fetchGitHubData(username)
-    
+
     const rateLimitInfo = formatRateLimitInfo(data.rateLimit)
-    
+
     const userData: UserProps = {
         login: data.user.login,
         name: data.user.name,
         avatar_url: data.user.avatarUrl
     }
-    
+
     // Filtrar repositórios (excluir forks)
     const repos = data.user.repositories.nodes
-    const nonForkRepos:Repository[] = repos.filter(repo => !repo.isFork)
-    
+    const nonForkRepos: Repository[] = repos.filter(repo => !repo.isFork)
+
     const { totalCommits, totalStars, totalForks } = calcCommitStarsForks(data, nonForkRepos)
-    
+
     // Calcular estatísticas de linguagens
     const languageRepoCount = calculateLanguageStats(nonForkRepos)
-    
+
     // Obter contribuições populares
     const popularContributions = getPopularContributions(nonForkRepos)
-    
+
     // Identificar repositórios bem estruturados
     const wellStructuredRepos = identifyWellStructuredRepos(nonForkRepos)
 
@@ -62,7 +87,7 @@ export async function getGitHubStatsGraphQL(username: string): Promise<GitHubCom
         totalForks,
         wellStructuredRepos.length
     )
-    
+
     // Calcular scores dos repositórios bem estruturados
     const wellStructuredRepoScores = calcStructuredRepoScores(wellStructuredRepos)
 

@@ -1,7 +1,7 @@
 import { gql } from "graphql-request";
 
 export const queryGitHubData = gql`
-query getUserStats($login: String!) {
+query getUserStats($login: String!, $from: DateTime!, $to: DateTime!) {
   rateLimit {
     remaining
     resetAt
@@ -32,7 +32,7 @@ query getUserStats($login: String!) {
       }
     }
 
-    contributionsCollection(from: user.createdAt,  to: now) {
+    contributionsCollection(from: $from, to: $to) {
       totalCommitContributions
       totalPullRequestContributions
       totalIssueContributions
