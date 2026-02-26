@@ -14,7 +14,7 @@ query getUserStats($login: String!, $from: DateTime!, $to: DateTime!) {
     avatarUrl
     createdAt
 
-    repositories(first: 20, ownerAffiliations: OWNER) {
+    repositories(first: 100, ownerAffiliations: OWNER) {
       nodes {
         name
         stargazerCount
