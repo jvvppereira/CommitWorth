@@ -32,7 +32,7 @@ query getUserStats($login: String!) {
       }
     }
 
-    contributionsCollection {
+    contributionsCollection(from: user.createdAt,  to: now) {
       totalCommitContributions
       totalPullRequestContributions
       totalIssueContributions
