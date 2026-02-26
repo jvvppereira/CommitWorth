@@ -8,68 +8,37 @@ export interface UserProps {
 }
 
 export interface GitHubStatsResponse {
-    rateLimit: {
-        limit: number
-        remaining: number
-        resetAt: string
-    }
-    user: {
-        id: string
-        login: string
+  rateLimit: {
+    remaining: number
+    resetAt: string
+  }
+  user: {
+    id: string
+    login: string
+    name: string
+    avatarUrl: string
+    createdAt: string
+    repositories: {
+      nodes: {
         name: string
-        avatarUrl: string
-        createdAt: string 
-        repositories: {
-            nodes: {
-                name: string
-                stargazerCount: number
-                forkCount: number
-                isFork: boolean
-                description: string | null
-                homepageUrl: string | null
-                hasIssuesEnabled: boolean
-                createdAt: string 
-                languages: {
-                    nodes: {
-                        name: string
-                    }[]
-                }
-                defaultBranchRef: {
-                    target: {
-                        history: {
-                            totalCount: number
-                        }
-                    }
-                } | null
-                mentionableUsers: {
-                    totalCount: number
-                }
-            }[]
+        stargazerCount: number
+        forkCount: number
+        isFork: boolean
+        createdAt: string
+        languages: {
+          nodes: {
+            name: string
+          }[]
         }
-        contributionsCollection: {  
-            contributionCalendar: {
-                totalContributions: number
-                weeks: {
-                    contributionDays: {
-                        contributionCount: number
-                        date: string
-                    }[]
-                }[]
-            }
-            commitContributionsByRepository: {
-                repository: {
-                    name: string
-                }
-                contributions: {
-                    totalCount: number
-                    nodes: {
-                        occurredAt: string
-                        commitCount: number
-                    }[]
-                }
-            }[]
-        }
+      }[]
     }
+    contributionsCollection: {
+      totalCommitContributions: number
+      totalPullRequestContributions: number
+      totalIssueContributions: number
+      totalRepositoryContributions: number
+    }
+  }
 }
 
 export interface Repository {
