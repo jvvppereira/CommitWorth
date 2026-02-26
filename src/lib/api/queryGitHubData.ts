@@ -20,6 +20,9 @@ query getUserStats($login: String!) {
         stargazerCount
         forkCount
         isFork
+        description
+        homepageUrl
+        hasIssuesEnabled
         createdAt
         languages(first: 5) {
           nodes {

@@ -1,4 +1,4 @@
-import { GitHubStatsResponse, Repository } from "../types"
+import { GitHubStatsResponse } from "../types"
 
 // calcula commits de forma mais precisa
 export function calculateUnifiedCommitCount(
