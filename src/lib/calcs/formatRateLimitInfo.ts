@@ -13,7 +13,7 @@ export function formatRateLimitInfo(rateLimit: GitHubStatsResponse['rateLimit'])
     const secondsUntilReset = Math.max(0, Math.floor((resetDate.getTime() - now.getTime()) / 1000))
     
     return {
-        limit: rateLimit.limit,
+        limit: 0,
         remaining: rateLimit.remaining,
         resetAtRelative: secondsUntilReset > 0 
             ? `${Math.floor(secondsUntilReset / 60)}min ${secondsUntilReset % 60}s`
