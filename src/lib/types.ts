@@ -9,6 +9,7 @@ export interface UserProps {
 
 export interface GitHubStatsResponse {
     rateLimit: {
+        limit: number
         remaining: number
         resetAt: string
     }

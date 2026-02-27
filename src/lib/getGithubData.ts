@@ -43,7 +43,14 @@ async function fetchGitHubData(username: string): Promise<GitHubStatsResponse> {
             return sum + res.user.contributionsCollection.totalCommitContributions
         }, 0)
 
-        baseResponse.user.contributionsCollection.totalCommitContributions = totalCommits
+        console.log(
+            results.map((r: GitHubStatsResponse) => ({
+                year: r.user.contributionsCollection,
+                commits: r.user.contributionsCollection.totalCommitContributions
+            }))
+        )
+
+        baseResponse.user.contributionsCollection.totalCommitContributions += totalCommits
 
         return baseResponse;
     } catch (error) {

@@ -3,6 +3,7 @@ import { gql } from "graphql-request";
 export const queryGitHubData = gql`
 query getUserStats($login: String!, $from: DateTime!, $to: DateTime!) {
   rateLimit {
+    limit
     remaining
     resetAt
   }
@@ -24,7 +25,7 @@ query getUserStats($login: String!, $from: DateTime!, $to: DateTime!) {
         homepageUrl
         hasIssuesEnabled
         createdAt
-        languages(first: 5) {
+        languages(first: 10) {
           nodes {
             name
           }
