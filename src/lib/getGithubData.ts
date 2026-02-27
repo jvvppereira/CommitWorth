@@ -30,7 +30,7 @@ async function fetchGitHubData(username: string): Promise<GitHubStatsResponse> {
 
         const promises = []
 
-        for (let year = userCreatedYear; year < currentYear; year++) {
+        for (let year = userCreatedYear; year <= currentYear; year++) {
             from = `${year}-01-01T00:00:00Z`
             to = `${year}-12-31T23:59:59Z`
 
@@ -39,18 +39,12 @@ async function fetchGitHubData(username: string): Promise<GitHubStatsResponse> {
 
         const results = await Promise.all(promises)
 
-        const totalCommits = results.reduce((sum: number, res: GitHubStatsResponse) => {
-            return sum + res.user.contributionsCollection.totalCommitContributions
+        //TODO: refactor, just a test
+        const totalContributions = results.reduce((sum: number, res: GitHubStatsResponse) => {
+            return sum + res.user.contributionsCollection.contributionCalendar.totalContributions
         }, 0)
 
-        console.log(
-            results.map((r: GitHubStatsResponse) => ({
-                year: r.user.contributionsCollection,
-                commits: r.user.contributionsCollection.totalCommitContributions
-            }))
-        )
-
-        baseResponse.user.contributionsCollection.totalCommitContributions += totalCommits
+        baseResponse.user.contributionsCollection.totalCommitContributions = totalContributions
 
         return baseResponse;
     } catch (error) {

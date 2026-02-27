@@ -38,6 +38,9 @@ query getUserStats($login: String!, $from: DateTime!, $to: DateTime!) {
       totalPullRequestContributions
       totalIssueContributions
       totalRepositoryContributions
+      contributionCalendar {
+        totalContributions
+      }
     }
   }
 }

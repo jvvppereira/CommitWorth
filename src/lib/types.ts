@@ -41,6 +41,9 @@ export interface GitHubStatsResponse {
             totalPullRequestContributions: number
             totalIssueContributions: number
             totalRepositoryContributions: number
+            contributionCalendar: {
+                totalContributions: number
+            }
         }
     }
 }
